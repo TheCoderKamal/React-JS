@@ -54,3 +54,19 @@ button:hover{
   color: white;
 
 }
+
+
+.input{
+  width: 500px;
+  margin: 20px;
+  border: 1px solid;
+  padding: 10px;
+  border-radius: 10px;
+}
+.btn{
+  width: 150px;
+  height: 50px;
+  border: 1px solid;
+  border-radius: 10px;
+  font-size: 1.2rem;
+}
