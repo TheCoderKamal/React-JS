@@ -37,7 +37,7 @@ export default function DynamicForm() {
                         <input
                             type="text"
                             placeholder="Enter seller email id..."
-                            value={sellerID} // Added value prop to clear input field
+                            value={sellerID} 
                             onChange={(event) => setSellerID(event.target.value)}
                             className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
                         />
@@ -47,7 +47,7 @@ export default function DynamicForm() {
                     <input
                         type="text"
                         placeholder="Enter company's name..."
-                        value={companyName} // Added value prop to clear input field
+                        value={companyName}
                         onChange={(event) => setCompanyName(event.target.value)}
                         className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
                         required
@@ -56,7 +56,7 @@ export default function DynamicForm() {
                     <input
                         type="text"
                         placeholder="Product name..."
-                        value={productName} // Added value prop to clear input field
+                        value={productName}
                         onChange={(event) => setProductName(event.target.value)}
                         className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
                         required
@@ -65,14 +65,14 @@ export default function DynamicForm() {
                     <input
                         type="text"
                         placeholder="Product price..."
-                        value={productPrice} // Added value prop to clear input field
+                        value={productPrice}
                         onChange={(event) => setProductPrice(event.target.value)}
                         className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
                         required
                     />
 
                     <select
-                        value={select} // Added value prop to clear input field
+                        value={select}
                         onChange={(event) => setSelect(event.target.value)}
                         className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 appearance-none"
                         required
