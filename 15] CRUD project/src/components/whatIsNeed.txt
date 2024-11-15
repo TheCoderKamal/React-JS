@@ -1,0 +1,5 @@
+name  --> textbox
+age  --> textbox
+hobby  --> checkbox = checked
+gender --> radio
+city --> dropdown = selected

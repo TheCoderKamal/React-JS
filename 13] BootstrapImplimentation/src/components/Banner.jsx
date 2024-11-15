@@ -4,7 +4,7 @@ export default function Banner() {
     return (
         <div>
             <div className="main-banner" id="top">
-                <video autoplay muted loop id="bg-video">
+                <video autoPlay muted loop id="bg-video">
                     <source src="assets/images/gym-video.mp4" type="video/mp4" />
                 </video>
 

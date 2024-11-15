@@ -1,0 +1,43 @@
+CRUD NOTES: 
+
+create :
+
+    1. make useState first for your input fields.
+    2 .then make input fields
+    3. make submit function
+        - first make a useState global level that can handle data / records
+        - make object to store data.
+        - set data into useState.
+        - set it in the local storage.
+        - clear all the fields.
+        extra : if you want then make a useRef to focus the first input field after submit the data for good UX.
+
+
+read :
+
+    1. make a table format to show data.
+    2. use [ record && record.length > 0 ? (show data) : (give message); ] to prevent errors.
+    3. make a useEffect to make sure that data will stay even after the page reloads.
+    4. use 'map' method to show the data, dont forgat to give the key for uniqueness and also take (element, index) as parameter.
+
+
+delete :
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

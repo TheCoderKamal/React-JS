@@ -8,7 +8,7 @@ export default function ContactUs() {
                     <div className="row">
                         <div className="col-lg-6 col-md-6 col-xs-12">
                             <div id="map">
-                            <iframe src="https://maps.google.com/maps?q=Av.+L%C3%BAcio+Costa,+Rio+de+Janeiro+-+RJ,+Brazil&t=&z=13&ie=UTF8&iwloc=&output=embed" width="100%" height="600px" frameborder="0" style="border:0" allowfullscreen></iframe>
+                            <iframe src="https://maps.google.com/maps?q=Av.+L%C3%BAcio+Costa,+Rio+de+Janeiro+-+RJ,+Brazil&t=&z=13&ie=UTF8&iwloc=&output=embed" width="100%" height="600px" frameBorder="0" style={{border:0}} allowFullScreen></iframe>
                             </div>
                         </div>
                         <div className="col-lg-6 col-md-6 col-xs-12">
