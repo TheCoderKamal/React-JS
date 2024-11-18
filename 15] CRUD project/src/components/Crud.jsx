@@ -1,254 +1,215 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react'
 
 export default function Crud() {
-  // UseStates
-  const [formData, setFormData] = useState({
-    name: "",
-    age: "",
-    gender: "",
-    hobbies: [],
-    city: "",
-  });
-  const [record, setRecord] = useState([]);
-  const [editID, setEditID] = useState(null);
 
-  // useEffect - Load initial data from localStorage
-  useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("students")) || [];
-    setRecord(data);
-  }, []);
+    // UseStates :
+    const [name, setName] = useState("");
+    const [age, setAge] = useState("");
+    const [gender, setGender] = useState("");
+    const [hobbies, setHobbies] = useState([]);
+    const [city, setCity] = useState("");
+    const [record, setRecord] = useState([]);
+    const [editID, setEditID] = useState(null);
 
-  // Handle Input Change
-  const handleChange = (event) => {
-    const { name, value, type, checked } = event.target;
+    // useEffect :
+    useEffect(() => {
+        let data = JSON.parse(localStorage.getItem("students")) || [];
+        setRecord(data);
+        console.log(data);
+    }, []);
 
-    if (type === "checkbox") {
-      setFormData((prev) => ({
-        ...prev,
-        hobbies: checked
-          ? [...prev.hobbies, value]
-          : prev.hobbies.filter((hobby) => hobby !== value),
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
-  };
-
-  // Handle Form Submission
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    if (editID === null) {
-      // Add new record
-      const newData = [...record, { ...formData, id: Date.now() }];
-      setRecord(newData);
-      localStorage.setItem("students", JSON.stringify(newData));
-    } else {
-      // Update existing record
-      const updatedData = record.map((item) =>
-        item.id === editID ? { ...formData, id: editID } : item
-      );
-      setRecord(updatedData);
-      localStorage.setItem("students", JSON.stringify(updatedData));
+    // Handle Hobbies :
+    let handleHobby = (event) => {
+        let { checked, value } = event.target;
+        if (checked) {
+            setHobbies([...hobbies, value]);
+        } else {
+            setHobbies(hobbies.filter(hobby => hobby !== value));
+        }
     }
 
-    resetForm();
-  };
+    // Handle City :
+    let handleCity = (event) => {
+        setCity(event.target.value);
+    }
 
-  // Reset Form Fields
-  const resetForm = () => {
-    setFormData({ name: "", age: "", gender: "", hobbies: [], city: "" });
-    setEditID(null);
-  };
+    // Submit Action :
+    const submitAction = (event) => {
+        event.preventDefault();
 
-  // Handle Edit
-  const handleEdit = (id) => {
-    const dataToEdit = record.find((item) => item.id === id);
-    setFormData(dataToEdit);
-    setEditID(id);
-  };
+        if (editID == null) {
+            let object = { id: Date.now(), name, age, gender, hobbies, city };
+            let newData = [...record, object];
+            setRecord(newData);
+            localStorage.setItem("students", JSON.stringify(newData));
+        } else {
+            let singleData = record.find(item => item.id == editID);
+            singleData.name = name;
+            singleData.age = age;
+            singleData.gender = gender;
+            singleData.hobbies = hobbies;
+            singleData.city = city;
+        }
 
-  // Handle Delete
-  const handleDelete = (id) => {
-    const filteredData = record.filter((item) => item.id !== id);
-    setRecord(filteredData);
-    localStorage.setItem("students", JSON.stringify(filteredData));
-  };
+        setName("");
+        setAge("");
+        setGender("");
+        setHobbies([]);
+        setCity("");
+        setEditID(null);
 
-  // Check if form is valid
-  const isFormValid = () => {
+    }
+
+    // Delete Action :
+    const deleteAction = (id) => {
+        let data = record.filter(item => item.id !== id);
+        setRecord(data);
+        localStorage.setItem("students", JSON.stringify(data));
+    };
+
+    // Edit Action :
+    const editAction = (id) => {
+        let data = record.find(item => item.id == id);
+        setName(data.name);
+        setAge(data.age);
+        setGender(data.gender);
+        setHobbies(data.hobbies);
+        setCity(data.city);
+        setEditID(data.id);
+    };
+
+
     return (
-      formData.name &&
-      formData.age &&
-      formData.gender &&
-      formData.hobbies.length > 0 &&
-      formData.city
-    );
-  };
-
-  return (
-    <div className="bg-gray-900 min-h-screen text-gray-200 py-10 px-4">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-gray-800 rounded-xl p-6 max-w-xl mx-auto shadow-lg"
-      >
-        <h1 className="text-2xl font-bold text-center mb-6">
-          Student Information Form
-        </h1>
-
-        {/* Name Input */}
-        <input
-          type="text"
-          name="name"
-          placeholder="Enter your name ..."
-          value={formData.name}
-          onChange={handleChange}
-          className="w-full p-2 mb-4 rounded-lg bg-gray-700 text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
-        />
-
-        {/* Age Input */}
-        <input
-          type="text"
-          name="age"
-          placeholder="Enter your age ..."
-          value={formData.age}
-          onChange={handleChange}
-          className="w-full p-2 mb-4 rounded-lg bg-gray-700 text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
-        />
-
-        {/* Gender Radio Buttons */}
-        <div className="mb-4">
-          <label className="mr-4">
-            <input
-              type="radio"
-              name="gender"
-              value="Male"
-              onChange={handleChange}
-              checked={formData.gender === "Male"}
-              className="mr-2"
-            />
-            Male
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="gender"
-              value="Female"
-              onChange={handleChange}
-              checked={formData.gender === "Female"}
-              className="mr-2"
-            />
-            Female
-          </label>
-        </div>
-
-        {/* Hobbies Checkboxes */}
-        <div className="mb-4">
-          {["ReactJS", "NodeJS", "MongoDB", "ExpressJS", "AI"].map((hobby) => (
-            <label key={hobby} className="block">
-              <input
-                type="checkbox"
-                value={hobby}
-                onChange={handleChange}
-                checked={formData.hobbies.includes(hobby)}
-                className="mr-2"
-              />
-              {hobby}
-            </label>
-          ))}
-        </div>
-
-        {/* City Dropdown */}
-        <select
-          name="city"
-          value={formData.city}
-          onChange={handleChange}
-          className="w-full p-2 mb-4 rounded-lg bg-gray-700 text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
-        >
-          <option value="" disabled>
-            --Select City--
-          </option>
-          {["Rajkot", "Ahmedabad", "Surat", "Jamnagar", "Bhuj"].map((city) => (
-            <option key={city} value={city}>
-              {city}
-            </option>
-          ))}
-        </select>
-
-        {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={!isFormValid()}
-          className={`w-full py-2 rounded-lg font-bold ${
-            isFormValid()
-              ? "bg-purple-500 text-gray-100 hover:bg-purple-600"
-              : "bg-gray-600 text-gray-400 cursor-not-allowed"
-          }`}
-        >
-          {editID === null ? "Submit" : "Update"}
-        </button>
-      </form>
-
-      {/* Data Table */}
-      <table className="w-full mt-10 text-sm bg-gray-800 rounded-lg shadow-lg">
-        <thead>
-          <tr className="bg-gray-700 text-gray-200">
-            <th className="py-2 px-4">#</th>
-            <th className="py-2 px-4">Name</th>
-            <th className="py-2 px-4">Age</th>
-            <th className="py-2 px-4">Gender</th>
-            <th className="py-2 px-4">Hobbies</th>
-            <th className="py-2 px-4">City</th>
-            <th className="py-2 px-4">Edit</th>
-            <th className="py-2 px-4">Delete</th>
-          </tr>
-        </thead>
-        <tbody>
-          {record.length > 0 ? (
-            record.map((data, index) => (
-              <tr key={data.id} className="hover:bg-gray-700">
-                <td className="py-2 px-4">{index + 1}</td>
-                <td className="py-2 px-4">{data.name}</td>
-                <td className="py-2 px-4">{data.age}</td>
-                <td className="py-2 px-4">{data.gender}</td>
-                <td className="py-2 px-4">
-                  <ul>
-                    {data?.hobbies.map((hobby, idx) => (
-                      <li key={idx}>{hobby}</li>
+        <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center">
+            <form onSubmit={submitAction} className="bg-gray-800 p-6 rounded-lg w-3/4">
+                <div className="mb-4">
+                    <input
+                        type="text"
+                        placeholder="Enter your name ..."
+                        value={name}
+                        onChange={e => setName(e.target.value)}
+                        className="w-full p-2 rounded bg-gray-700 text-white"
+                    />
+                </div>
+                <div className="mb-4">
+                    <input
+                        type="text"
+                        placeholder="Enter your age ..."
+                        value={age}
+                        onChange={e => setAge(e.target.value)}
+                        className="w-full p-2 rounded bg-gray-700 text-white"
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="mr-4">
+                        <input
+                            type="radio"
+                            name="gender"
+                            value="Male"
+                            onChange={e => setGender(e.target.value)}
+                            checked={gender === "Male"}
+                        />
+                        Male
+                    </label>
+                    <label>
+                        <input
+                            type="radio"
+                            name="gender"
+                            value="Female"
+                            onChange={e => setGender(e.target.value)}
+                            checked={gender === "Female"}
+                        />
+                        Female
+                    </label>
+                </div>
+                <div className="mb-4">
+                    {["ReactJS", "NodeJS", "MongoDB", "ExpressJS", "AI"].map((hobby) => (
+                        <label key={hobby} className="mr-4">
+                            <input
+                                type="checkbox"
+                                value={hobby}
+                                onChange={handleHobby}
+                                checked={hobbies.includes(hobby)}
+                            />
+                            {hobby}
+                        </label>
                     ))}
-                  </ul>
-                </td>
-                <td className="py-2 px-4">{data.city}</td>
-                <td className="py-2 px-4">
-                  <button
-                    onClick={() => handleEdit(data.id)}
-                    className="text-blue-400 hover:underline"
-                  >
-                    Edit
-                  </button>
-                </td>
-                <td className="py-2 px-4">
-                  <button
-                    onClick={() => handleDelete(data.id)}
-                    className="text-red-400 hover:underline"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={8} className="text-center py-4 text-gray-400">
-                No data found...
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
-  );
+                </div>
+                <div className="mb-4">
+                    <select
+                        value={city}
+                        onChange={handleCity}
+                        className="w-full p-2 rounded bg-gray-700 text-white"
+                    >
+                        <option value="" disabled>--Select City--</option>
+                        <option value="Rajkot">Rajkot</option>
+                        <option value="Ahmedabad">Ahmedabad</option>
+                        <option value="Surat">Surat</option>
+                        <option value="Jamnagar">Jamnagar</option>
+                        <option value="Bhuj">Bhuj</option>
+                    </select>
+                </div>
+                <button
+                    type="submit"
+                    className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded"
+                >
+                    {editID == null ? "Submit" : "Update"}
+                </button>
+            </form>
+
+            <table className="table-auto bg-gray-800 text-white w-3/4 mt-6 rounded-lg">
+                <thead>
+                    <tr>
+                        <th className="p-2 border">ID</th>
+                        <th className="p-2 border">Name</th>
+                        <th className="p-2 border">Age</th>
+                        <th className="p-2 border">Gender</th>
+                        <th className="p-2 border">Hobbies</th>
+                        <th className="p-2 border">City</th>
+                        <th className="p-2 border">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {record && record.length > 0 ? (
+                        record.map((data, index) => (
+                            <tr key={index} className="text-center">
+                                <td className="p-2 border">{index + 1}</td>
+                                <td className="p-2 border">{data.name}</td>
+                                <td className="p-2 border">{data.age}</td>
+                                <td className="p-2 border">{data.gender}</td>
+                                <td className="p-2 border">
+                                    <ul>
+                                        {data.hobbies.map((hobby, idx) => (
+                                            <li key={idx}>{hobby}</li>
+                                        ))}
+                                    </ul>
+                                </td>
+                                <td className="p-2 border">{data.city}</td>
+                                <td className="p-2 border">
+                                    <button
+                                        onClick={() => editAction(data.id)}
+                                        className="bg-yellow-600 hover:bg-yellow-500 text-white px-2 py-1 rounded"
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        onClick={() => deleteAction(data.id)}
+                                        className="bg-red-600 hover:bg-red-500 text-white px-2 py-1 rounded ml-2"
+                                    >
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="7" className="text-center p-4">
+                                No data found...
+                            </td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+        </div>
+    );
 }
