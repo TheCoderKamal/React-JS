@@ -4,40 +4,29 @@ import { auth, db } from "../../firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 
 export default function Dashboard() {
-  const [user, setUser] = useState(null);
-  const [userData, setUserData] = useState(null);
-
+  const [user, setUser] = useState("");
+  const [userData, setUserData] = useState();
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (data) => {
-      if (data) {
+    onAuthStateChanged(auth, (data) => {
+      if(data){
         setUser(data.uid);
-      } else {
-        setUser(null);
+        console.log(data.uid);
       }
-    });
-
-    return () => unsubscribe();
+    })
   }, []);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        if (user) {
-          const docSnap = await getDoc(doc(db, "users", user));
-          if (docSnap.exists()) {
-            setUserData(docSnap.data());
-            console.log("User Data:", docSnap.data());
-          } else {
-            console.log("No such document!");
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
     fetchUser();
-  }, [user]);
+  }, [user])
+
+  const fetchUser = async () => {
+    if(user){
+      await getDoc(doc(db, "users", user)).then((data) => {
+        setUserData(data.data());
+        console.log(data.data())
+      })
+    }
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 text-gray-100">
