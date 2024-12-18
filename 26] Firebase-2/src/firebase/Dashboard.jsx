@@ -1,8 +1,9 @@
-import { addDoc, collection, doc, getDocs, getDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, getDocs, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { auth, db } from '../../firebaseConfig';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { ClockLoader } from 'react-spinners';
+import { useNavigate } from 'react-router-dom';
 
 export default function Dashboard() {
   const [user, setUser] = useState('');
@@ -10,6 +11,9 @@ export default function Dashboard() {
   const [movie, setMovie] = useState('');
   const [actor, setActor] = useState('');
   const [record, setRecord] = useState([]);
+  const [editId, setEditId] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     onAuthStateChanged(auth, (data) => {
@@ -44,10 +48,39 @@ export default function Dashboard() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    await addDoc(collection(db, 'data'), { userId: user, movie, actor });
+    if (editId) {
+      await updateDoc(doc(db, 'data', editId), { movie, actor });
+    } else {
+      await addDoc(collection(db, 'data'), { userId: user, movie, actor });
+      setEditId(null);
+    }
+
     setMovie('');
     setActor('');
     fetchData();
+  };
+
+  const handleEdit = (id, movieName, actorName) => {
+    setEditId(id);
+    setMovie(movieName);
+    setActor(actorName);
+  };
+
+  const handleDelete = async (id) => {
+    await deleteDoc(doc(db, 'data', id));
+    fetchData();
+  };
+
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        setUser('');
+        setUserData(null);
+        navigate("/");
+      })
+      .catch((error) => {
+        console.error('Logout failed:', error.message);
+      });
   };
 
   return (
@@ -55,9 +88,17 @@ export default function Dashboard() {
       <div className="max-w-3xl w-full bg-gray-800 rounded-lg shadow-lg p-6">
         {userData ? (
           <>
-            <h1 className="text-4xl font-bold mb-6">
-              Welcome, <span className="text-red-500">{userData.name}</span>
-            </h1>
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-4xl font-bold">
+                Welcome, <span className="text-red-500">{userData.name}</span>
+              </h1>
+              <button
+                onClick={handleLogout}
+                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-300"
+              >
+                Logout
+              </button>
+            </div>
             <p className="text-lg text-gray-400 mb-6">Share your favorite movies and actors!</p>
 
             <form
@@ -82,7 +123,7 @@ export default function Dashboard() {
                 type="submit"
                 className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition duration-300"
               >
-                Submit
+                {editId ? 'Update' : 'Submit'}
               </button>
             </form>
 
@@ -96,9 +137,23 @@ export default function Dashboard() {
                     <h2 className="text-xl font-bold text-red-400 mb-2">
                       🎬 {e.movie}
                     </h2>
-                    <p className="text-gray-300">
+                    <p className="text-gray-300 mb-4">
                       🎭 <span className="font-medium">{e.actor}</span>
                     </p>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleEdit(e.docId, e.movie, e.actor)}
+                        className="bg-blue-500 text-white px-4 py-1 rounded-lg hover:bg-blue-600 transition duration-300"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(e.docId)}
+                        className="bg-red-500 text-white px-4 py-1 rounded-lg hover:bg-red-600 transition duration-300"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 ))
               ) : (
