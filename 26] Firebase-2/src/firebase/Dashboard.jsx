@@ -24,8 +24,10 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
-    fetchUser();
-    fetchData();
+    if(user){
+      fetchUser();
+      fetchData();
+    }
   }, [user]);
 
   const fetchUser = async () => {
@@ -42,7 +44,7 @@ export default function Dashboard() {
       docId: item.id,
       ...item.data(),
     }));
-    setRecord(details);
+    setRecord(details.filter(item => item.userId === user));
   };
 
   const handleSubmit = async (event) => {
@@ -50,9 +52,9 @@ export default function Dashboard() {
 
     if (editId) {
       await updateDoc(doc(db, 'data', editId), { movie, actor });
+      setEditId(null);
     } else {
       await addDoc(collection(db, 'data'), { userId: user, movie, actor });
-      setEditId(null);
     }
 
     setMovie('');
@@ -114,7 +116,7 @@ export default function Dashboard() {
               />
               <input
                 type="text"
-                placeholder="Favorite actor name..."
+                placeholder="Movie's actor name..."
                 className="w-full md:w-1/2 px-4 py-2 rounded-lg border border-gray-700 bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
                 onChange={(e) => setActor(e.target.value)}
                 value={actor}
