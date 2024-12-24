@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth, db } from '../../firebaseConfig';
+import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { auth, db, google } from '../../firebaseConfig';
 import { doc, setDoc } from 'firebase/firestore';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -21,6 +21,21 @@ export default function SignUp() {
             navigate("/dashboard", {replace: true})
         })
     }
+
+    const handleGoogleAuth = async() => {
+        await signInWithPopup(auth, google).then(data => {
+            console.log(data)
+            setDoc(doc(db, "users", data.user.uid), {
+                name: data.user.displayName,
+                email: data.user.email,
+                age: "21",
+                city: "rajkot",
+                imgUrl: data.user.photoURL
+            })
+            navigate("/dashboard", {replace: true})
+        })
+    }
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-black text-white">
             <div className="w-full max-w-md p-8 bg-gray-800 rounded-lg shadow-lg">
@@ -66,9 +81,15 @@ export default function SignUp() {
                         className="w-full py-2 bg-red-600 hover:bg-red-700 rounded-md text-white font-semibold shadow-md transition duration-300">
                         Sign Up
                     </button>
+
+                    <button
+                        onClick={handleGoogleAuth}
+                        className="w-full py-2 bg-red-600 hover:bg-red-700 rounded-md text-white font-semibold shadow-md transition duration-300">
+                        <i className="fa-brands fa-google me-3"></i> Sign up via google
+                    </button>
                 </form>
                 <p className="text-center text-gray-400 text-sm mt-4">
-                    Already have an account? <Link to={"/signin"} className="text-red-500 hover:underline">Log in</Link>
+                Already have an account? <Link to={"/signin"} className="text-red-500 hover:underline">Log in</Link>
                 </p>
             </div>
         </div>
